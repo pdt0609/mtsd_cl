@@ -1,8 +1,11 @@
 import os
+import PIL
 
-# Example path (replace with your actual path to PIL installation)
-PIL_PATH = '/opt/conda/lib/python3.10/site-packages/PIL'
+
+# Get the path to the PIL module
+PIL_PATH = os.path.dirname(PIL.__file__)
 IMAGE_PY = os.path.join(PIL_PATH, 'Image.py')
+
 
 # Open Image.py and modify MAX_IMAGE_PIXELS
 try:
