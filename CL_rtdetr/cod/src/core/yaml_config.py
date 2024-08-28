@@ -43,10 +43,7 @@ class YAMLConfig(BaseConfig):
         # * CL Eval
         self.fpp: bool = False
 
-        # *  WandB
-        self.wandb_name = cfg.get("wandb_name", None)
-        self.wandb_project = cfg.get("wandb_project", "cod")
-        self.wandb_entity = cfg.get("wandb_entity", "tuanlda78202")
+
         self.config_info = copy.deepcopy(self.yaml_cfg)
 
         # * CL Rehearsal

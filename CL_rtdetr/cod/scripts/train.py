@@ -5,7 +5,6 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), ".."
 import argparse
 
 os.makedirs("./outputs", exist_ok=True)
-os.environ["WANDB_DIR"] = "./outputs"
 
 import src.misc.dist as dist
 from src.core import YAMLConfig
@@ -38,12 +37,7 @@ def main(
         args.config, resume=args.resume, use_amp=args.amp, tuning=args.tuning
     )
 
-    wandb.init(
-        project=cfg.wandb_project,
-        entity=cfg.wandb_entity,
-        name=cfg.wandb_name,
-        config=cfg.config_info,
-    )
+    
 
     solver = TASKS[cfg.yaml_cfg["task"]](cfg)
 
@@ -51,8 +45,6 @@ def main(
         solver.val()
     else:
         solver.fit()
-
-    wandb.finish()
 
 
 if __name__ == "__main__":

@@ -11,9 +11,7 @@ from termcolor import colored, cprint
 from pyexpat import model
 
 import copy
-import wandb
 from tqdm import tqdm
-
 
 def load_model_params(model: model, ckpt_path: str = None):
     new_model_dict = model.state_dict()
@@ -205,12 +203,8 @@ def train_one_epoch(
             kd_loss=location_loss.item() if distill_attn else 0,
         )
 
-        wandb.log(
-            {
-                "RT-DETR Loss": loss_value,
-                "KD Loss": (location_loss.item() if distill_attn else 0),
-            }
-        )
+        # If you need to log these losses, you can print them, save to a file, or use another logging library
+        print(f"Epoch {epoch}, Batch {batch_idx}: Loss = {loss_value.item()}, KD Loss = {location_loss.item() if distill_attn else 0}")
 
 
 @torch.no_grad()
@@ -259,15 +253,12 @@ def evaluate(
     if "bbox" in iou_types:
         stats["coco_eval_bbox"] = coco_evaluator.coco_eval["bbox"].stats.tolist()
 
-    wandb.log(
-        {
-            "AP@0.5:0.95": stats["coco_eval_bbox"][0] * 100,
-            "AP@0.5": stats["coco_eval_bbox"][1] * 100,
-            "AP@0.75": stats["coco_eval_bbox"][2] * 100,
-            "AP@0.5:0.95 Small": stats["coco_eval_bbox"][3] * 100,
-            "AP@0.5:0.95 Medium": stats["coco_eval_bbox"][4] * 100,
-            "AP@0.5:0.95 Large": stats["coco_eval_bbox"][5] * 100,
-        }
-    )
+    # If you need to log these stats, you can print them, save to a file, or use another logging library
+    print(f"AP@0.5:0.95 = {stats['coco_eval_bbox'][0] * 100}")
+    print(f"AP@0.5 = {stats['coco_eval_bbox'][1] * 100}")
+    print(f"AP@0.75 = {stats['coco_eval_bbox'][2] * 100}")
+    print(f"AP@0.5:0.95 Small = {stats['coco_eval_bbox'][3] * 100}")
+    print(f"AP@0.5:0.95 Medium = {stats['coco_eval_bbox'][4] * 100}")
+    print(f"AP@0.5:0.95 Large = {stats['coco_eval_bbox'][5] * 100}")
 
     return stats["coco_eval_bbox"][0] * 100
