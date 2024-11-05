@@ -9,8 +9,8 @@ train_dataloader:
   dataset:
     type: CocoDetectionCL
 
-    img_folder: /cl/MTSD/mtsd_fully_annotated_train_images/images
-    ann_file: /mnt/thanhpd/mtsd_task0_hier/mtsd_cl/CL_rtdetr/train_output_file_coco.json
+    img_folder: home/kc/cl/MTSD/mtsd_fully_annotated_train_images/images
+    ann_file: home/kc/mnt/thanhpd/mtsd_task0_hier/mtsd_cl/CL_rtdetr/train_output_file_coco.json
     transforms:
       type: Compose
       ops: ~
