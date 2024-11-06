@@ -1,4 +1,3 @@
-
 """by lyuwenyu
 """
 
@@ -264,24 +263,23 @@ class TransformerDecoder(nn.Module):
                            attn_mask, memory_mask, query_pos_embed)
 
             inter_ref_bbox = F.sigmoid(bbox_head[i](output) + inverse_sigmoid(ref_points_detach))
-#abc
+#fixing
             if self.training:
                 dec_out_logits.append(score_head[i](output))
-                
-                #print("score_head[i](output).shape",score_head[i](output).shape)
-                
-                #print("output.shape",output.shape)
+
                 dec_out_ori_logits.append(output)
 
                 if i == 0:
                     dec_out_bboxes.append(inter_ref_bbox)
                 else:
                     dec_out_bboxes.append(F.sigmoid(bbox_head[i](output) + inverse_sigmoid(ref_points)))
-
+                
+                
             elif i == self.eval_idx:
                 dec_out_logits.append(score_head[i](output))
                 dec_out_ori_logits.append(output)
                 dec_out_bboxes.append(inter_ref_bbox)
+                
                 break
 
             ref_points = inter_ref_bbox
@@ -341,8 +339,8 @@ class RTDETRTransformer(nn.Module):
 
         # Transformer module
         decoder_layer = TransformerDecoderLayer(hidden_dim, nhead, dim_feedforward, dropout, activation, num_levels, num_decoder_points)
-        self.decoder = TransformerDecoder(hidden_dim, decoder_layer, num_decoder_layers, eval_idx)
-
+        self.decoder = TransformerDecoder(hidden_dim, decoder_layer, num_decoder_layers, eval_idx)        
+        
         self.num_denoising = num_denoising
         self.label_noise_ratio = label_noise_ratio
         self.box_noise_scale = box_noise_scale
@@ -602,15 +600,22 @@ class RTDETRTransformer(nn.Module):
         
         #fixing
 
-            
         
         #out = {'pred_logits': out_logits[-1], 'pred_boxes': out_bboxes[-1],'origin_logits':out_ori_logits[-1]}
         #print("out['origin_logits'].shape",out['origin_logits'].shape)
-        out = {'pred_logits': out_logits[-1], 'pred_boxes': out_bboxes[-1]
-               ,'origin_logits_l6':out_ori_logits[-1]
-               ,'origin_logits_l5':out_ori_logits[-2]
-               ,'origin_logits_l4':out_ori_logits[-3]
-              }
+        
+        
+        if self.training:
+        
+            out = {'pred_logits': out_logits[-1], 'pred_boxes': out_bboxes[-1]
+                   ,'origin_logits_l6':out_ori_logits[-1]
+                   ,'origin_logits_l5':out_ori_logits[-2]
+                   ,'origin_logits_l4':out_ori_logits[-3]
+                  }
+        else:
+            out = {'pred_logits': out_logits[-1], 'pred_boxes': out_bboxes[-1]
+                   ,'origin_logits_l6':out_ori_logits[-1]
+                   }
         
         if self.training and self.aux_loss:
             out['aux_outputs'] = self._set_aux_loss(out_logits[:-1], out_bboxes[:-1], out_ori_logits[:-1] , out_ori_logits[:-1], out_ori_logits[:-1])
